@@ -61,8 +61,8 @@
 			// 
 			// txtImageInfo
 			// 
-			this.txtImageInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left)));
+			this.txtImageInfo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
 			this.txtImageInfo.Font = new System.Drawing.Font("宋体", 16F);
 			this.txtImageInfo.Location = new System.Drawing.Point(93, 12);
 			this.txtImageInfo.Multiline = true;
