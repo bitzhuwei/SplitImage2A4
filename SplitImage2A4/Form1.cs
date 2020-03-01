@@ -15,10 +15,30 @@ namespace SplitImage2A4
 	{
 		Bitmap sourceImage;
 		string filename;
+		string configFilename = "SplitImage2A4.conf";
 
 		public Form1()
 		{
 			InitializeComponent();
+
+		}
+
+		private void Form1_Load(object sender, EventArgs e)
+		{
+			if (!System.IO.File.Exists(configFilename))
+			{
+				ConfigFile.DumpInitialConfigFile(configFilename);
+			}
+
+			ConfigFile config = ConfigFile.Load(configFilename);
+			foreach (var item in config.SizeList)
+			{
+				this.cmbSolution.Items.Add(item);
+			}
+			if (config.SizeList.Count > 0)
+			{
+				this.cmbSolution.SelectedIndex = 0;
+			}
 		}
 
 		private void btnOpen_Click(object sender, EventArgs e)
@@ -36,11 +56,16 @@ namespace SplitImage2A4
 					float yDpi = this.sourceImage.VerticalResolution;
 					float width = this.sourceImage.Width;
 					float height = this.sourceImage.Height;
+					CanvasSize size;
+					if (this.cmbSolution.SelectedIndex >= 0)
+					{ size = (CanvasSize)this.cmbSolution.SelectedItem; }
+					else
+					{ size = new CanvasSize() { width = width, height = height, unit = eUnit.inch }; }
 					// A4: 8.267 x 11.692 inches
-					float hA4 = yDpi * 8.267f;
-					float vA4 = xDpi * 11.692f;
-					int pH =(int) Math.Ceiling( width / hA4);
-					int pV =(int)Math.Ceiling( height / vA4);
+					float hTarget = yDpi * size.width;
+					float vTarget = xDpi * size.height;
+					int pH = (int)Math.Ceiling(width / hTarget);
+					int pV = (int)Math.Ceiling(height / vTarget);
 					var builder = new StringBuilder();
 					//builder.AppendFormat($"fullname:{this.filename}");
 					//builder.AppendLine();
@@ -66,16 +91,22 @@ namespace SplitImage2A4
 				MessageBox.Show("Please Select an image first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 			}
 
+			if (this.cmbSolution.SelectedIndex < 0)
+			{
+				MessageBox.Show("Please Select/Create a solution first!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
+
 			this.btnSplit.Enabled = false;
-			
+
 			float xDpi = this.sourceImage.HorizontalResolution;
 			float yDpi = this.sourceImage.VerticalResolution;
 			float width = this.sourceImage.Width;
 			float height = this.sourceImage.Height;
 
+			var size = (CanvasSize)this.cmbSolution.SelectedItem;
 			// A4: 8.267 x 11.692 inches
-			float hA4 = yDpi * 8.267f;
-			float vA4 = xDpi * 11.692f;
+			float hTarget = yDpi * size.width;
+			float vTarget = xDpi * size.height;
 			float cursorX = 0;
 			float cursorY = 0;
 			int indexX = 0;
@@ -85,32 +116,34 @@ namespace SplitImage2A4
 				while (cursorX <= width)
 				{
 					Bitmap bmpPart = null;
-					float pW = 0; float pH = 0;
+					//float pW = 0; float pH = 0;
 					//if (cursorX + hA4 <= width) { pW = hA4; }
 					//else { pW = width - cursorX; }
 					//if (cursorY + vA4 <= height) { pH = vA4; }
 					//else { pH = height - cursorY; }
 					//bmpPart = new Bitmap((int)pW, (int)pH);
-					bmpPart = new Bitmap((int)hA4, (int)vA4);
+					bmpPart = new Bitmap((int)hTarget, (int)vTarget);
 					bmpPart.SetResolution(xDpi, yDpi);
 					using (var g = Graphics.FromImage(bmpPart))
 					{
 						g.DrawImage(this.sourceImage,
-							new RectangleF(0, 0, hA4, vA4),
-							new RectangleF(cursorX, cursorY, hA4, vA4),
+							new RectangleF(0, 0, hTarget, vTarget),
+							new RectangleF(cursorX, cursorY, hTarget, vTarget),
 							 GraphicsUnit.Pixel);
 					}
 					bmpPart.Save(string.Format($"{this.filename}_{indexY:00}_{indexX:00}.png"));
 					bmpPart.Dispose();
 					indexX++;
-					cursorX = cursorX + hA4;
+					cursorX = cursorX + hTarget;
 				}
 				indexY++;
 				cursorX = 0;
-				cursorY = cursorY + vA4;
+				cursorY = cursorY + vTarget;
 			}
 
 			this.btnSplit.Enabled = true;
 		}
+
 	}
 }
+
