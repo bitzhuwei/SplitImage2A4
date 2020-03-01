@@ -131,7 +131,7 @@ namespace SplitImage2A4
 							new RectangleF(cursorX, cursorY, hTarget, vTarget),
 							 GraphicsUnit.Pixel);
 					}
-					bmpPart.Save(string.Format($"{this.filename}_{indexY:00}_{indexX:00}.png"));
+					bmpPart.Save(string.Format($"{this.filename}_{indexY:00}_{indexX:00}.jpg"));
 					bmpPart.Dispose();
 					indexX++;
 					cursorX = cursorX + hTarget;

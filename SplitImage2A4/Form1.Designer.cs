@@ -101,6 +101,7 @@
 			this.rdoVertical.Name = "rdoVertical";
 			this.rdoVertical.Size = new System.Drawing.Size(65, 23);
 			this.rdoVertical.TabIndex = 4;
+			this.rdoVertical.TabStop = true;
 			this.rdoVertical.Text = "纵向";
 			this.rdoVertical.UseVisualStyleBackColor = true;
 			// 
@@ -137,7 +138,7 @@
 			this.btnCreate.TabIndex = 0;
 			this.btnCreate.Text = "New...";
 			this.btnCreate.UseVisualStyleBackColor = true;
-			this.btnCreate.Click += new System.EventHandler(this.btnOpen_Click);
+			this.btnCreate.Visible = false;
 			// 
 			// Form1
 			// 
