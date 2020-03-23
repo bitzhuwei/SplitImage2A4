@@ -50,8 +50,7 @@ namespace SplitImage2A4
 				{
 					this.sourceImage = new Bitmap(filename);
 					this.filename = (new FileInfo(filename)).FullName;
-					this.imgSource.Image = this.sourceImage;
-					this.imgSource.SizeMode = PictureBoxSizeMode.Zoom;
+					//this.imgSource.SizeMode = PictureBoxSizeMode.Zoom;
 
 					this.UpdateImageInfo();
 				}
@@ -92,6 +91,35 @@ namespace SplitImage2A4
 			builder.AppendFormat($"=>:{pH}*{pV} parts.");
 			builder.AppendLine();
 			this.txtImageInfo.Text = builder.ToString();
+
+			{
+				Image old = this.imgSource.Image;
+				this.imgSource.Image = null;
+				if (old != null) { old.Dispose(); }
+			}
+
+			var newImage = new Bitmap(this.sourceImage);
+			float cursorX = 0;
+			float cursorY = 0;
+			int indexX = 0;
+			int indexY = 0;
+			using (var g = Graphics.FromImage(newImage))
+			{
+				while (cursorY <= height)
+				{
+					while (cursorX <= width)
+					{
+						g.DrawRectangle(Pens.Red, cursorX, cursorY, hTarget, vTarget);
+						indexX++;
+						cursorX = cursorX + hTarget;
+					}
+					indexY++;
+					cursorX = 0;
+					cursorY = cursorY + vTarget;
+				}
+			}
+
+			this.imgSource.Image = newImage;
 		}
 
 		private void btnSplit_Click(object sender, EventArgs e)
