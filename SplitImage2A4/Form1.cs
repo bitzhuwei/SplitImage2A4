@@ -52,36 +52,46 @@ namespace SplitImage2A4
 					this.filename = (new FileInfo(filename)).FullName;
 					this.imgSource.Image = this.sourceImage;
 					this.imgSource.SizeMode = PictureBoxSizeMode.Zoom;
-					float xDpi = this.sourceImage.HorizontalResolution;
-					float yDpi = this.sourceImage.VerticalResolution;
-					float width = this.sourceImage.Width;
-					float height = this.sourceImage.Height;
-					CanvasSize size;
-					if (this.cmbSolution.SelectedIndex >= 0)
-					{ size = (CanvasSize)this.cmbSolution.SelectedItem; }
-					else
-					{ size = new CanvasSize() { width = width, height = height, unit = eUnit.inch }; }
-					// A4: 8.267 x 11.692 inches
-					float hTarget = yDpi * size.width;
-					float vTarget = xDpi * size.height;
-					int pH = (int)Math.Ceiling(width / hTarget);
-					int pV = (int)Math.Ceiling(height / vTarget);
-					var builder = new StringBuilder();
-					//builder.AppendFormat($"fullname:{this.filename}");
-					//builder.AppendLine();
-					builder.AppendFormat($"DPI:{xDpi}, {yDpi}");
-					//builder.AppendLine();
-					builder.AppendFormat($", Size:{width}, {height}");
-					builder.AppendLine();
-					builder.AppendFormat($"=>:{pH}*{pV} parts.");
-					builder.AppendLine();
-					this.txtImageInfo.Text = builder.ToString();
+
+					this.UpdateImageInfo();
 				}
 				catch (Exception ex)
 				{
 					MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
+		}
+
+		private void UpdateImageInfo()
+		{
+			if (this.sourceImage == null) { return; }
+
+			float xDpi = this.sourceImage.HorizontalResolution;
+			float yDpi = this.sourceImage.VerticalResolution;
+			float width = this.sourceImage.Width;
+			float height = this.sourceImage.Height;
+			CanvasSize size;
+			if (this.cmbSolution.SelectedIndex >= 0)
+			{ size = (CanvasSize)this.cmbSolution.SelectedItem; }
+			else
+			{ size = new CanvasSize() { width = width, height = height, unit = eUnit.inch }; }
+			bool 纵向 = this.rdoVertical.Checked;
+			// A4: 8.267 x 11.692 inches
+			float hTarget = yDpi * (纵向 ? size.width : size.height);
+			float vTarget = xDpi * (纵向 ? size.height : size.width);
+
+			int pH = (int)Math.Ceiling(width / hTarget);
+			int pV = (int)Math.Ceiling(height / vTarget);
+			var builder = new StringBuilder();
+			//builder.AppendFormat($"fullname:{this.filename}");
+			//builder.AppendLine();
+			builder.AppendFormat($"DPI:{xDpi}, {yDpi}");
+			//builder.AppendLine();
+			builder.AppendFormat($", Size:{width}, {height}");
+			builder.AppendLine();
+			builder.AppendFormat($"=>:{pH}*{pV} parts.");
+			builder.AppendLine();
+			this.txtImageInfo.Text = builder.ToString();
 		}
 
 		private void btnSplit_Click(object sender, EventArgs e)
@@ -102,11 +112,12 @@ namespace SplitImage2A4
 			float yDpi = this.sourceImage.VerticalResolution;
 			float width = this.sourceImage.Width;
 			float height = this.sourceImage.Height;
+			bool 纵向 = this.rdoVertical.Checked;
 
 			var size = (CanvasSize)this.cmbSolution.SelectedItem;
 			// A4: 8.267 x 11.692 inches
-			float hTarget = yDpi * size.width;
-			float vTarget = xDpi * size.height;
+			float hTarget = yDpi * (纵向 ? size.width : size.height);
+			float vTarget = xDpi * (纵向 ? size.height : size.width);
 			float cursorX = 0;
 			float cursorY = 0;
 			int indexX = 0;
@@ -144,6 +155,15 @@ namespace SplitImage2A4
 			this.btnSplit.Enabled = true;
 		}
 
+		private void rdoVertical_CheckedChanged(object sender, EventArgs e)
+		{
+			this.UpdateImageInfo();
+		}
+
+		private void rdoHorizontal_CheckedChanged(object sender, EventArgs e)
+		{
+			this.UpdateImageInfo();
+		}
 	}
 }
 

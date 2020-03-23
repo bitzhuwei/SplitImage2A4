@@ -104,6 +104,7 @@
 			this.rdoVertical.TabStop = true;
 			this.rdoVertical.Text = "纵向";
 			this.rdoVertical.UseVisualStyleBackColor = true;
+			this.rdoVertical.CheckedChanged += new System.EventHandler(this.rdoVertical_CheckedChanged);
 			// 
 			// rdoHorizontal
 			// 
@@ -115,6 +116,7 @@
 			this.rdoHorizontal.TabIndex = 4;
 			this.rdoHorizontal.Text = "横向";
 			this.rdoHorizontal.UseVisualStyleBackColor = true;
+			this.rdoHorizontal.CheckedChanged += new System.EventHandler(this.rdoHorizontal_CheckedChanged);
 			// 
 			// cmbSolution
 			// 
